@@ -1,38 +1,253 @@
-.App {
-  text-align: center;
-}
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app{
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+}
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
 }
 
-.App-link {
-  color: #61dafb;
+html {
+  height: -webkit-fill-available;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+main {
+  height: 100vh;
+  height: -webkit-fill-available;
+  max-height: 100vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.dropdown-toggle { outline: 0; }
+
+.btn-toggle {
+  padding: .25rem .5rem;
+  font-weight: 600;
+  color: var(--bs-emphasis-color);
+  background-color: transparent;
+}
+.btn-toggle:hover,
+.btn-toggle:focus {
+  color: rgba(var(--bs-emphasis-color-rgb), .85);
+  background-color: var(--bs-tertiary-bg);
+}
+
+.btn-toggle::before {
+  width: 1.25em;
+  line-height: 0;
+  content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+  transition: transform .35s ease;
+  transform-origin: .5em 50%;
+}
+
+[data-bs-theme="dark"] .btn-toggle::before {
+  content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%28255,255,255,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+}
+
+.btn-toggle[aria-expanded="true"] {
+  color: rgba(var(--bs-emphasis-color-rgb), .85);
+}
+.btn-toggle[aria-expanded="true"]::before {
+  transform: rotate(90deg);
+}
+
+.btn-toggle-nav a {
+  padding: .1875rem .5rem;
+  margin-top: .125rem;
+  margin-left: 1.25rem;
+}
+.btn-toggle-nav a:hover,
+.btn-toggle-nav a:focus {
+  background-color: var(--bs-tertiary-bg);
+}
+
+.scrollarea {
+  overflow-y: auto;
+}
+
+.marker-1{
+  height: 10px;
+  width: 10px;
+  background-color: blue;
+  border: 1px solid white;
+  position: absolute;
+  top: 216px;
+  left: 29px;
+}
+.marker-2{
+  height: 10px;
+  width: 10px;
+  background-color: blue;
+  border: 1px solid white;
+  position: absolute;
+  top: 222px;
+  left: 138px;
+
+}
+.marker-3{
+  height: 10px;
+  width: 10px;
+  background-color: blue;
+  border: 1px solid white;
+  top: 393px;
+  left: 132px;
+  position: absolute;
+}
+.marker-4{
+  height: 10px;
+  width: 10px;
+  background-color: blue;
+  border: 1px solid white;
+  top: 393px;
+  left: 18px;
+  position: absolute;
+
+}
+
+.marker-5{
+  height: 10px;
+  width: 10px;
+  background-color: red;
+  border: 1px solid white;
+  position: absolute;
+  top: 221px;
+  left: 170px;
+}
+.marker-6{
+  height: 10px;
+  width: 10px;
+  background-color: red;
+  border: 1px solid white;
+  position: absolute;
+  top: 221px;
+  left: 265px;
+
+}
+.marker-7{
+  height: 10px;
+  width: 10px;
+  background-color: red;
+  border: 1px solid white;
+  top: 391px;
+  left: 263px;
+  position: absolute;
+
+}
+.marker-8{
+  height: 10px;
+  width: 10px;
+  background-color: red;
+  border: 1px solid white;
+  top: 387px;
+  left: 153px;
+  position: absolute;
+}
+
+.marker-9{
+  height: 10px;
+  width: 10px;
+  background-color: green;
+  border: 1px solid white;
+  position: absolute;
+  top: 221px;
+  left: 292px;
+}
+.marker-10{
+  height: 10px;
+  width: 10px;
+  background-color: green;
+  border: 1px solid white;
+  position: absolute;
+  top: 223px;
+  left: 425px;
+}
+.marker-11{
+  height: 10px;
+  width: 10px;
+  background-color: green;
+  border: 1px solid white;
+  top: 400px;
+  left: 441px;
+  position: absolute;
+}
+.marker-12{
+  height: 10px;
+  width: 10px;
+  background-color: green;
+  border: 1px solid white;
+  top: 392px;
+  left: 297px;
+  position: absolute;
+
+}
+
+
+.marker-13{
+  height: 10px;
+  width: 10px;
+  background-color: pink;
+  border: 1px solid white;
+  position: absolute;
+  top: 222px;
+  left: 453px;
+}
+.marker-14{
+  height: 10px;
+  width: 10px;
+  background-color: pink;
+  border: 1px solid white;
+  position: absolute;
+  top: 221px;
+  left: 567px;
+
+}
+.marker-15{
+  height: 10px;
+  width: 10px;
+  background-color: pink;
+  border: 1px solid white;
+  top: 403px;
+  left: 586px;
+  position: absolute;
+}
+.marker-16{
+  height: 10px;
+  width: 10px;
+  background-color: pink;
+  border: 1px solid white;
+  top: 397px;
+  left: 469px;
+  position: absolute;
+}
+
+.image-container{
+  padding: 0;
+  width: 640px;
+  height: 480px;
+  position: relative;
+}
+.canvas-menu{
+  border: solid 4px black;
+  width: 720px;
+  height: 480px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+canvas{
+  border: solid 4px black;
+  width: 640px;
+  height: 480px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.img-source{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.sample-canvas {
+  height: 800px;
 }
