@@ -25,56 +25,18 @@ async function PostParams(jsonData) {
     return res
 }
 
-
-async function ConnectCamera() {
-  
-	await axios.get(`${BASE_HT200}/setCameraActive`)
-		.then(response => {
-
-          
-			Swal.fire({
-				title: "Completado!",
-				text: "Cambios Cargados Con Éxito",
-				icon: "success",
-			});
-            
- 
-		})
-		.catch(function (error) {
-			console.error(error);
-			Swal.fire({
-				icon: 'error',
-				title: 'Error de Conexión',
-				text: `${error}`,
-			  })
-		});
-
+async function getPredictions() {
+	var res;
+	await axios.get(`${BASE_HT200}/predict`).then(response => {
+		res = response.data
+		
+	}).catch(function (error) {
+		console.log(res);
+	})
+	return res
 }
 
-async function DisconnectCamera(jsonData) {
-   
-	await axios.post(`${BASE_HT200}/setCameraInactive`,jsonData)
-		.then(response => {
 
-          
-			Swal.fire({
-				title: "Completado!",
-				text: "Cambios Cargados Con Éxito",
-				icon: "success",
-			});
-            console.log(response.data)
-       
-		})
-		.catch(function (error) {
-			console.error(error);
-			Swal.fire({
-				icon: 'error',
-				title: 'Error de Conexión',
-				text: `${error}`,
-			  })
-		});
- 
-}
 
 
 async function DisconnectIA(jsonData) {
@@ -119,4 +81,4 @@ async function ConnectIA(jsonData) {
 
 
 
-export {PostParams,ConnectCamera,DisconnectCamera,DisconnectIA,ConnectIA}
+export {PostParams,DisconnectIA,ConnectIA,getPredictions}
