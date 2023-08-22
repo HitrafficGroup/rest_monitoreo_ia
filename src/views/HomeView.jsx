@@ -151,12 +151,17 @@ export default function HomeView() {
         let data_send = []
         for(let i =0; i<aux_data.length;i++){
             let puntos = aux_data[i].points
+            puntos.forEach((item) =>{
+                item[0] = parseInt(((640*item[0])/960))
+                item[1] = parseInt(((360*item[1])/540))
+            })
             puntos.pop()
             let new_data ={
                 points: puntos,
                 name: `zone-${i}`
             }
             data_send.push(new_data)
+
         }
 
         await PostParams(data_send)
@@ -167,6 +172,10 @@ export default function HomeView() {
         let data_send = []
         for(let i =0; i<aux_data.length;i++){
             let puntos = aux_data[i].points
+            puntos.forEach((item) =>{
+                item[0] = parseInt(((640*item[0])/960))
+                item[1] = parseInt(((360*item[1])/540))
+            })
             puntos.pop()
             let new_data ={
                 points: puntos,
