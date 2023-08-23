@@ -9,7 +9,7 @@ export const ColorPicker = (props) => {
   
 
   return (
-    <div className={`color-picker  ${selected? "selected":""}`} onClick={onClick}  style={{backgroundColor:fill}}>
+    <div className={`color-picker  ${selected? "selected":""}`} onClick={onClick}  style={{backgroundColor:fill,marginTop:8}}>
         {selected? <CheckIcon style={{color:"white"}}/>:""}
     </div>
       

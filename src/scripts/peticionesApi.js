@@ -79,6 +79,16 @@ async function ConnectIA(jsonData) {
  
 }
 
+async function getValues() {
+	var res;
+	await axios.get(`${BASE_HT200}/values`).then(response => {
+		res = response.data
+	}).catch(function (error) {
+		console.log(error);
+	})
+	return res
+}
 
 
-export {PostParams,DisconnectIA,ConnectIA,getPredictions}
+
+export {PostParams,DisconnectIA,ConnectIA,getPredictions,getValues}
