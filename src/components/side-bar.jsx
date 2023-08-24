@@ -1,7 +1,7 @@
-import HomeIcon from '@mui/icons-material/Home';
+//import HomeIcon from '@mui/icons-material/Home';
 import SettingsIcon from '@mui/icons-material/Settings';
-import CalendarViewMonthIcon from '@mui/icons-material/CalendarViewMonth';
-import SpeedIcon from '@mui/icons-material/Speed';
+// import CalendarViewMonthIcon from '@mui/icons-material/CalendarViewMonth';
+// import SpeedIcon from '@mui/icons-material/Speed';
 import { Button } from '@mui/material';
 import Container from '@mui/material/Container';
 export default function SideBar(props) {
@@ -15,19 +15,19 @@ export default function SideBar(props) {
                     </a>
                     <hr />
                     <ul className="nav nav-pills flex-column mb-auto">
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <div className='nav-link text-white flex-row  '>
                                 <HomeIcon />
                                 <Button className='text-white'  >Home</Button>
                             </div>
-                        </li>
+                        </li> */}
                         <li className="nav-item">
                             <div className='nav-link text-white flex-row active '>
                                 <SettingsIcon />
                                 <Button className='text-white'  >Configuracion</Button>
                             </div>
                         </li>
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <div className='nav-link text-white flex-row  '>
                                 <CalendarViewMonthIcon />
                                 <Button className='text-white'  >Horarios</Button>
@@ -38,18 +38,15 @@ export default function SideBar(props) {
                                 <SpeedIcon />
                                 <Button className='text-white'  >Funcionamiento</Button>
                             </div>
-                        </li>
+                        </li> */}
 
                     </ul>
-
                     <hr />
                 </div>
-
                 <div className="vh-100 container-md overflow-scroll text-center ">
                     <Container maxWidth="xl">
                         {children}
                     </Container>
-
                 </div>
             </main>
 

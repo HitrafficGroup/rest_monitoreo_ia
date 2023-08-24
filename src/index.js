@@ -5,10 +5,24 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.css';
+import { ThemeProvider, createTheme } from '@mui/material/styles';;
 const root = ReactDOM.createRoot(document.getElementById('root'));
+const theme = createTheme({
+  palette: {
+
+    success: {
+      main: '#43a047',
+    },
+  },
+});
+
+
+
 root.render(
   <BrowserRouter>
+  <ThemeProvider theme={theme}>
     <App />
+  </ThemeProvider>
     </BrowserRouter>
 );
 

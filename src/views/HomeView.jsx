@@ -1,4 +1,3 @@
-
 import Grid from '@mui/material/Grid';
 import { useEffect, useRef, useState } from 'react';
 import { PostParams, DisconnectIA, ConnectIA, getValues } from '../scripts/peticionesApi';
@@ -8,7 +7,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import IconButton from '@mui/material/IconButton';
-import FormGroup from '@mui/material/FormGroup';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -16,7 +14,13 @@ import { ColorPicker } from '../components/item-color';
 import { CardZone } from '../components/card-zone';
 import image2 from "../assets/camera.jpg";
 import { v4 } from 'uuid';
-
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Snackbar from '@mui/material/Snackbar';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 let colores = [
     { stroke: 'rgba(192, 57, 43, 1)', fill: 'rgba(192, 57, 43 , 0.5)', active: true, name: 'rojo' },
     { stroke: 'rgba(81, 46, 95, 1)', fill: 'rgba(142, 68, 173,  0.5)', active: false, name: 'morado' },
@@ -35,6 +39,58 @@ export default function HomeView() {
     const areasTotales = useRef([]);
     const markerPos = useRef([])
     const [zonesInference, setZonesInference] = useState([{}])
+    const [checked, setChecked] = useState(false);
+    const [open,  setOpen] = useState(false);
+    const [open2, setOpen2] = useState(false);
+    const [open3, setOpen3] = useState(false);
+
+    
+    
+      const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setOpen(false);
+      };
+      const handleClose2 = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setOpen2(false);
+      };
+    
+    const handleChange = async(event) => {
+        if(event.target.checked){
+            console.log("se activa la ia")
+            let aux_data = JSON.parse(JSON.stringify(areasTotales.current))
+            let data_send = []
+            for (let i = 0; i < aux_data.length; i++) {
+                let puntos = aux_data[i].points
+                puntos.forEach((item) => {
+                    item[0] = parseInt(((640 * item[0]) / 960))
+                    item[1] = parseInt(((360 * item[1]) / 540))
+                })
+                puntos.pop()
+                let new_data = {
+                    points: puntos,
+                    name: `zone-${i}`,
+                    color: aux_data[i].stroke
+                }
+                data_send.push(new_data)
+            }
+            await PostParams(data_send)
+            await ConnectIA()
+            setOpen(true)
+            setChecked(true);
+        }else{
+            console.log("se desactiva la ia")
+            await DisconnectIA();
+            setOpen2(true);
+            setChecked(false);
+        }
+    };
 
 
 
@@ -141,30 +197,8 @@ export default function HomeView() {
         await PostParams(data_send)
 
     }
-    const activarIA = async () => {
-        let aux_data = JSON.parse(JSON.stringify(areasTotales.current))
-        let data_send = []
-        for (let i = 0; i < aux_data.length; i++) {
-            let puntos = aux_data[i].points
-            puntos.forEach((item) => {
-                item[0] = parseInt(((640 * item[0]) / 960))
-                item[1] = parseInt(((360 * item[1]) / 540))
-            })
-            puntos.pop()
-            let new_data = {
-                points: puntos,
-                name: `zone-${i}`,
-                color: aux_data[i].stroke
-            }
-            data_send.push(new_data)
-        }
-        await PostParams(data_send)
-        await ConnectIA()
-    }
-    const desactivarIA = async () => {
-
-        await DisconnectIA()
-    }
+   
+  
     const getVideoPrediction = async () => {
         var newImage = new Image();
         newImage.src = "http://127.0.0.1:50100/predict?" + new Date().getTime();
@@ -173,11 +207,13 @@ export default function HomeView() {
 
     }
     const eliminarElemento = async (__data) => {
+        setOpen3(true)
         let elementos_filtrados = areasDeclaradas.filter(item => item.name !== __data.name)
         setAreasDeclaradas(elementos_filtrados)
         areasTotales.current = elementos_filtrados
         await enviarPuntos()
         drawnPoints();
+        setOpen3(false)
     }
 
 
@@ -216,6 +252,7 @@ export default function HomeView() {
     }
 
     const guardarAreas = async () => {
+        setOpen3(true)
         let aux_areas = JSON.parse(JSON.stringify(areasDeclaradas))
         let aux_color = JSON.parse(JSON.stringify(colorSelected))
         let aux_points = JSON.parse(JSON.stringify(pointsAreas.current))
@@ -249,8 +286,9 @@ export default function HomeView() {
             data_send.push(new_data)
 
         }
-
+       
         await PostParams(data_send)
+        setOpen3(false)
     }
 
 
@@ -260,7 +298,7 @@ export default function HomeView() {
             var data_ia = await getValues()
             setZonesInference(data_ia.data)
             console.log(data_ia)
-        }, 2000);
+        }, 500);
         drawnPoints();
         borrarPuntos();
         return () => clearInterval(interval);
@@ -274,16 +312,14 @@ export default function HomeView() {
             <Grid container className={"mt-4"} spacing={2}>
                 <Grid item md={2}>
                     <Stack spacing={1} direction="column">
-                        <Button variant="contained" onClick={activarIA}>Conectar IA </Button>
-                        <Button variant="contained" onClick={desactivarIA}>Desconectar IA </Button>
-                    </Stack>
-                </Grid>
-                <Grid item md={2}>
-                    <Stack spacing={1} direction="column">
+                        <FormGroup>
+                            <FormControlLabel control={<Switch checked={checked} color='success' onChange={handleChange}  inputProps={{ 'aria-label': 'controlled' }}  />} label="ACTIVAR IA" />
+                        </FormGroup>
                         <Button variant="contained" onClick={getVideoPrediction}>TRAER VIDEO</Button>
                     </Stack>
                 </Grid>
-                <Grid item md={8}>
+                
+                <Grid item md={10}>
                     <Stack direction="row" spacing={2}>
                         {zonesInference.map((item, index) => {
                             return (
@@ -356,7 +392,18 @@ export default function HomeView() {
 
                 </Grid>
             </Grid>
-
+            <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
+                <Alert severity="success">La Inteligencia Artificial a sido Conectada!</Alert>
+            </Snackbar>
+            <Snackbar open={open2} autoHideDuration={2000} onClose={handleClose2}>
+                <Alert severity="warning">La Inteligencia Artificial a sido Desactivada!</Alert>
+            </Snackbar>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open3}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </>
 
     )
