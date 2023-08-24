@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/material';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import RadarIcon from '@mui/icons-material/Radar';
-export const CardZone = (props) => {
+
+export const CardCounter = (props) => {
   const { value, sx,zona,color_icono } = props;
 
   return (
@@ -19,7 +19,7 @@ export const CardZone = (props) => {
               color="text.secondary"
               variant="overline"
             >
-              Zona-{zona}
+              conteo
             </Typography>
             <Typography variant="h6">
               {value}
@@ -33,7 +33,7 @@ export const CardZone = (props) => {
             }}
           >
             <SvgIcon>
-              <RadarIcon />
+              <DirectionsCarIcon />
             </SvgIcon>
           </Avatar>
         </Stack>
@@ -42,7 +42,7 @@ export const CardZone = (props) => {
   );
 };
 
-CardZone.propTypes = {
+CardCounter.propTypes = {
   value: PropTypes.string,
   zona:PropTypes.number,
   sx: PropTypes.object,

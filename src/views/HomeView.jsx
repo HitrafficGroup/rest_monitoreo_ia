@@ -1,6 +1,6 @@
 import Grid from '@mui/material/Grid';
 import { useEffect, useRef, useState } from 'react';
-import { PostParams, DisconnectIA, ConnectIA, getValues } from '../scripts/peticionesApi';
+import { PostParams, DisconnectIA, ConnectIA, getValues,UpdateCounter } from '../scripts/peticionesApi';
 import { styled } from '@mui/material/styles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -21,6 +21,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
+import { CardCounter } from '../components/card-counter';
 let colores = [
     { stroke: 'rgba(192, 57, 43, 1)', fill: 'rgba(192, 57, 43 , 0.5)', active: true, name: 'rojo' },
     { stroke: 'rgba(81, 46, 95, 1)', fill: 'rgba(142, 68, 173,  0.5)', active: false, name: 'morado' },
@@ -38,11 +39,14 @@ export default function HomeView() {
     const [areasDeclaradas, setAreasDeclaradas] = useState([])
     const areasTotales = useRef([]);
     const markerPos = useRef([])
-    const [zonesInference, setZonesInference] = useState([{}])
+    const [zonesInference, setZonesInference] = useState([{conteo:0}])
     const [checked, setChecked] = useState(false);
     const [open,  setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [open3, setOpen3] = useState(false);
+    const flag = useRef(false);
+    const refPoint1 = useRef([160,170])
+    const refPoint2 = useRef([510,170])
 
     
     
@@ -76,7 +80,8 @@ export default function HomeView() {
                 let new_data = {
                     points: puntos,
                     name: `zone-${i}`,
-                    color: aux_data[i].stroke
+                    color: aux_data[i].stroke,
+                    line_position: [refPoint1.current,refPoint2.current]
                 }
                 data_send.push(new_data)
             }
@@ -84,11 +89,13 @@ export default function HomeView() {
             await ConnectIA()
             setOpen(true)
             setChecked(true);
+            flag.current = true;
         }else{
             console.log("se desactiva la ia")
             await DisconnectIA();
             setOpen2(true);
             setChecked(false);
+            flag.current = false;
         }
     };
 
@@ -135,6 +142,8 @@ export default function HomeView() {
             ctx.closePath();
         })
 
+     
+         
         areas.map((item) => {
 
             ctx.fillStyle = "yellow";
@@ -147,7 +156,17 @@ export default function HomeView() {
             })
                 ;
         })
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        ctx.moveTo(refPoint1.current[0], refPoint1.current[1]);
+        ctx.lineTo(refPoint2.current[0], refPoint2.current[1]);
+        ctx.lineWidth = 5;
+        ctx.stroke();
+        ctx.closePath();
 
+        
+
+    
 
 
         //
@@ -290,18 +309,89 @@ export default function HomeView() {
         await PostParams(data_send)
         setOpen3(false)
     }
+    const actualizarLinePos = async()=>{
+        let aux_point1 =  JSON.parse(JSON.stringify(refPoint1.current))
+        aux_point1[0] = parseInt(((640 * aux_point1[0]) / 960))
+        aux_point1[1] = parseInt(((360 * aux_point1[1]) / 540))
+        let aux_point2 =  JSON.parse(JSON.stringify(refPoint2.current))
+        aux_point2[0] = parseInt(((640 * aux_point2[0]) / 960))
+        aux_point2[1] = parseInt(((360 * aux_point2[1]) / 540))
+        await UpdateCounter({line_position:[aux_point1,aux_point2]})
+    }
+    function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        if (document.getElementById(elmnt.id + "header")) {
+            /* if present, the header is where you move the DIV from:*/
+            document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+        } else {
+            /* otherwise, move the DIV from anywhere inside the DIV:*/
+            elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            let posx = (elmnt.offsetTop - pos2) + "px";
+            let y = (elmnt.offsetTop - pos2)
+            let x = (elmnt.offsetLeft - pos1)
+            let posy = (elmnt.offsetLeft - pos1) + "px";
+            elmnt.style.top = posx
+            elmnt.style.left = posy
+            if (elmnt.id === "mydiv") {
+                refPoint1.current =[x+10,y+10]
+            }else{
+                refPoint2.current = [x+10,y+10]
+            }
+            drawnPoints();
+
+
+
+        }
+
+        function closeDragElement() {
+            /* stop moving when mouse button is released:*/
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
+
+
+
 
 
     useEffect(() => {
-
-        const interval = setInterval(async () => {
-            var data_ia = await getValues()
-            setZonesInference(data_ia.data)
-            console.log(data_ia)
-        }, 500);
+        dragElement(document.getElementById("mydiv"));
+        dragElement(document.getElementById("mydiv2"));
         drawnPoints();
         borrarPuntos();
-        return () => clearInterval(interval);
+
+    
+            const interval = setInterval(async () => {
+                if(flag.current){
+                var data_ia = await getValues()
+                setZonesInference(data_ia.data)
+                }
+            }, 500);
+            return () => clearInterval(interval);
+  
+
         //eslint disable next-line
     }, []);
 
@@ -318,8 +408,10 @@ export default function HomeView() {
                         <Button variant="contained" onClick={getVideoPrediction}>TRAER VIDEO</Button>
                     </Stack>
                 </Grid>
-                
-                <Grid item md={10}>
+                <Grid item md={2}>
+                    <CardCounter value={zonesInference[0].conteo} color_icono={'rgba(26, 188, 156 ,  0.5)'}/>
+                </Grid>
+                <Grid item md={8}>
                     <Stack direction="row" spacing={2}>
                         {zonesInference.map((item, index) => {
                             return (
@@ -345,6 +437,7 @@ export default function HomeView() {
 
                             }
                         </div>
+                        <Button variant="contained" color='primary' onClick={actualizarLinePos} >ACTUALIZAR CONTADOR</Button>
                         <Button variant="contained" color='error' onClick={borrarPuntos} >BORRAR PUNTOS</Button>
                         <Button variant="contained" color='secondary' onClick={guardarAreas} >GUARDAR AREA</Button>
                         <h5>Zonas creadas: </h5>
@@ -388,6 +481,8 @@ export default function HomeView() {
                         <canvas id="canvas" onClick={(event) => { printMousePosition(event) }}  >
 
                         </canvas>
+                        <div className="marker-1"  id="mydiv"  >1</div>
+                        <div className="marker-2"   id="mydiv2" >2</div>
                     </div>
 
                 </Grid>

@@ -81,11 +81,12 @@ main {
   top: 0px;
 }
 canvas{
-  border: solid 4px red;
+  border: solid 4px wheat;
   width: 960px;
   height: 540px;
   left: 0px;
   top: 0px;
+  border-radius: 4px;
   cursor: crosshair;
   position: absolute;
 }
@@ -93,6 +94,7 @@ canvas{
   position: absolute;
   left: 0px;
   top: 0px;
+  border-radius: 4px;
 }
 .sample-canvas {
   height: 800px;
@@ -117,7 +119,36 @@ canvas{
   align-items: center;
 }
 
+.marker-1{
+  cursor: move;
+  height: 25px;
+  width: 25px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  border-radius: 50%;
+  background-color: blue;
+  border: 1px solid white;
+  position: absolute;
+  top: 160px;
+  color: wheat;
+  font-weight: bold;
+  left: 150px;
+}
+.marker-2{
+  cursor: move;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  background-color: blue;
+  border: 1px solid white;
+  position: absolute;
+  top: 160px;
+  color: wheat;
+  font-weight: bold;
+  left: 500px;
 
+}
 .hide {
   display: none;
 }

@@ -59,6 +59,26 @@ async function DisconnectIA(jsonData) {
  
 }
 
+
+async function UpdateCounter(jsonData) {
+   
+	await axios.post(`${BASE_HT200}/setLinePos`,jsonData)
+		.then(response => {
+
+        
+            console.log(response.data)
+       
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+			  })
+		});
+ 
+}
 async function ConnectIA(jsonData) {
    
 	await axios.post(`${BASE_HT200}/activateIA`,jsonData)
@@ -91,4 +111,4 @@ async function getValues() {
 
 
 
-export {PostParams,DisconnectIA,ConnectIA,getPredictions,getValues}
+export {PostParams,DisconnectIA,ConnectIA,getPredictions,getValues,UpdateCounter}
