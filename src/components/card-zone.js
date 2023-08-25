@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/material';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+
 import RadarIcon from '@mui/icons-material/Radar';
 export const CardZone = (props) => {
   const { value, sx,zona,color_icono } = props;

@@ -11,7 +11,7 @@ export default function SideBar(props) {
             <main className="d-flex flex-nowrap vh-100">
                 <div className="d-flex flex-column flex-shrink-0 p-3 text-bg-dark">
                     <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span className="fs-4">Deteccion Vehicular</span>
+                        <span className="fs-4  "><h1 className='text-end w-100'>Menu</h1></span>
                     </a>
                     <hr />
                     <ul className="nav nav-pills flex-column mb-auto">
