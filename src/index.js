@@ -13,11 +13,12 @@ const theme = createTheme({
     exito: {
       main: '#58D68D',
       contrastText: '#fff',
+      dark: '#239B56',
     },
     delete: {
       main: '#EC7063',
       light: '#42a5f5',
-      dark: '#1565c0',
+      dark: '#CB4335',
       contrastText: '#fff',
     },
   },

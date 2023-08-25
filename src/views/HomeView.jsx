@@ -328,9 +328,9 @@ export default function HomeView() {
             elmnt.style.top = posx
             elmnt.style.left = posy
             if (elmnt.id === "mydiv") {
-                refPoint1.current =[x+10,y+10]
+                refPoint1.current =[x+15,y+15]
             }else{
-                refPoint2.current = [x+10,y+10]
+                refPoint2.current = [x+15,y+15]
             }
             drawnPoints();
 
