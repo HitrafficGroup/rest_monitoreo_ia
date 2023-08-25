@@ -108,7 +108,19 @@ async function getValues() {
 	})
 	return res
 }
+async function getConfig() {
+	var res;
+	await axios.get(`${BASE_HT200}/config`).then(response => {
+		res = response.data 
+		
+	}).catch(function (error) {
+		console.log(error);
+	})
+	return res
+}
 
 
 
-export {PostParams,DisconnectIA,ConnectIA,getPredictions,getValues,UpdateCounter}
+
+
+export {PostParams,DisconnectIA,ConnectIA,getPredictions,getValues,UpdateCounter,getConfig}

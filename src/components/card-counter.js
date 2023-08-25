@@ -3,7 +3,7 @@ import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/mate
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 
 export const CardCounter = (props) => {
-  const { value, sx,zona,color_icono } = props;
+  const { value, sx,color_icono } = props;
 
   return (
     <Card sx={sx}>
@@ -44,7 +44,6 @@ export const CardCounter = (props) => {
 
 CardCounter.propTypes = {
   value: PropTypes.string,
-  zona:PropTypes.number,
   sx: PropTypes.object,
   color_icono:PropTypes.string
 };

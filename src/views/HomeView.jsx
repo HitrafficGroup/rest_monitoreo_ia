@@ -1,6 +1,6 @@
 import Grid from '@mui/material/Grid';
 import { useEffect, useRef, useState } from 'react';
-import { PostParams, DisconnectIA, ConnectIA, getValues,UpdateCounter } from '../scripts/peticionesApi';
+import { PostParams, DisconnectIA, ConnectIA, getValues,UpdateCounter,getConfig } from '../scripts/peticionesApi';
 import { styled } from '@mui/material/styles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -67,25 +67,25 @@ export default function HomeView() {
     
     const handleChange = async(event) => {
         if(event.target.checked){
-            console.log("se activa la ia")
-            let aux_data = JSON.parse(JSON.stringify(areasTotales.current))
-            let data_send = []
-            for (let i = 0; i < aux_data.length; i++) {
-                let puntos = aux_data[i].points
-                puntos.forEach((item) => {
-                    item[0] = parseInt(((640 * item[0]) / 960))
-                    item[1] = parseInt(((360 * item[1]) / 540))
-                })
-                puntos.pop()
-                let new_data = {
-                    points: puntos,
-                    name: `zone-${i}`,
-                    color: aux_data[i].stroke,
-                    line_position: [refPoint1.current,refPoint2.current]
-                }
-                data_send.push(new_data)
-            }
-            await PostParams(data_send)
+            // console.log("se activa la ia")
+            // let aux_data = JSON.parse(JSON.stringify(areasTotales.current))
+            // let data_send = []
+            // for (let i = 0; i < aux_data.length; i++) {
+            //     let puntos = aux_data[i].points
+            //     puntos.forEach((item) => {
+            //         item[0] = parseInt(((640 * item[0]) / 960))
+            //         item[1] = parseInt(((360 * item[1]) / 540))
+            //     })
+            //     puntos.pop()
+            //     let new_data = {
+            //         points: puntos,
+            //         name: `zone-${i}`,
+            //         color: aux_data[i].stroke,
+            //         line_position: [refPoint1.current,refPoint2.current]
+            //     }
+            //     data_send.push(new_data)
+            // }
+            // await PostParams(data_send)
             await ConnectIA()
             setOpen(true)
             setChecked(true);
@@ -163,13 +163,6 @@ export default function HomeView() {
         ctx.lineWidth = 5;
         ctx.stroke();
         ctx.closePath();
-
-        
-
-    
-
-
-        //
     }
 
     const selectColor = (__data) => {
@@ -207,7 +200,8 @@ export default function HomeView() {
             let new_data = {
                 points: puntos,
                 name: v4(),
-                color: aux_data[i].stroke
+                fill:aux_data[i].fill,
+                stroke: aux_data[i].stroke
             }
             data_send.push(new_data)
 
@@ -222,8 +216,6 @@ export default function HomeView() {
         var newImage = new Image();
         newImage.src = "http://127.0.0.1:50100/predict?" + new Date().getTime();
         document.getElementById("camera-1").src = newImage.src;
-
-
     }
     const eliminarElemento = async (__data) => {
         setOpen3(true)
@@ -235,6 +227,20 @@ export default function HomeView() {
         setOpen3(false)
     }
 
+    const traerConfiguracion = async()=>{
+        let data = await getConfig()
+        data.forEach((item)=>{
+            item.points.forEach((item)=>{
+                item[0] = parseInt(((960 * item[0]) / 640))
+                item[1] = parseInt(((540 * item[1]) / 360))
+            })
+            item.points.push(item.points[0])
+        })
+        setAreasDeclaradas(data)
+        areasTotales.current = data
+        drawnPoints()
+        console.log(data)
+    }
 
 
 
@@ -276,9 +282,8 @@ export default function HomeView() {
         let aux_color = JSON.parse(JSON.stringify(colorSelected))
         let aux_points = JSON.parse(JSON.stringify(pointsAreas.current))
         aux_points[aux_points.length - 1] = aux_points[0];
-        let indice = aux_areas.length
         let new_area = {
-            name: "zone-" + indice,
+            name: v4(),
             points: aux_points,
             fill: aux_color.fill,
             stroke: aux_color.stroke,
@@ -298,9 +303,10 @@ export default function HomeView() {
             })
             puntos.pop()
             let new_data = {
+                name: aux_data[i].name,
                 points: puntos,
-                name: `zone-${i}`,
-                color: aux_data[i].stroke
+                fill:aux_data[i].fill,
+                stroke: aux_data[i].stroke
             }
             data_send.push(new_data)
 
@@ -379,7 +385,7 @@ export default function HomeView() {
     useEffect(() => {
         dragElement(document.getElementById("mydiv"));
         dragElement(document.getElementById("mydiv2"));
-        drawnPoints();
+        traerConfiguracion();
         borrarPuntos();
 
     
@@ -408,17 +414,18 @@ export default function HomeView() {
                         <Button variant="contained" onClick={getVideoPrediction}>TRAER VIDEO</Button>
                     </Stack>
                 </Grid>
-                <Grid item md={2}>
+                <Grid item md={2} >
                     <CardCounter value={zonesInference[0].conteo} color_icono={'rgba(26, 188, 156 ,  0.5)'}/>
                 </Grid>
                 <Grid item md={8}>
                     <Stack direction="row" spacing={2}>
-                        {zonesInference.map((item, index) => {
+                        {
+                        zonesInference.map((item, index) => {
                             return (
                                 <CardZone value={item.detecciones} zona={index} color_icono={item.color} />
                             )
-                        })}
-
+                        }
+                        )}
                     </Stack>
                 </Grid>
 
@@ -429,17 +436,16 @@ export default function HomeView() {
                         <div className='color-container'>
                             {coloresPicker.map((item, index) => {
                                 return (
-
                                     <ColorPicker key={index} fill={item.stroke} selected={item.active} onClick={() => { selectColor(item) }} />
-
                                 );
                             })
 
                             }
                         </div>
-                        <Button variant="contained" color='primary' onClick={actualizarLinePos} >ACTUALIZAR CONTADOR</Button>
+                        <Button variant="contained" color='primary' onClick={actualizarLinePos} >ACTUALIZAR</Button>
                         <Button variant="contained" color='error' onClick={borrarPuntos} >BORRAR PUNTOS</Button>
                         <Button variant="contained" color='secondary' onClick={guardarAreas} >GUARDAR AREA</Button>
+                        <Button variant="contained" color='secondary' onClick={traerConfiguracion} >LEER CONFIGURACION</Button>
                         <h5>Zonas creadas: </h5>
                         <Demo>
                             <List>
@@ -456,16 +462,10 @@ export default function HomeView() {
                                         >
                                             <ListItemAvatar>
                                                 <FormGroup>
-
-
                                                     <ColorPicker key={index} fill={item.stroke} selected={false} />
-
-
                                                 </FormGroup>
                                             </ListItemAvatar>
-                                            <ListItemText
-                                                primary={item.name}
-                                            />
+                                        <ListItemText primary={`zone-${index}`} />
                                         </ListItem>
                                     );
 
