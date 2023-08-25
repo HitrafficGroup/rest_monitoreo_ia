@@ -409,9 +409,8 @@ export default function HomeView() {
                             }
                         </div>
                         <Button variant="contained" color='primary' onClick={actualizarLinePos} >ACTUALIZAR</Button>
-                        <Button variant="contained" color='error' onClick={borrarPuntos} >BORRAR PUNTOS</Button>
-                        <Button variant="contained" color='secondary' onClick={guardarAreas} >GUARDAR AREA</Button>
-                        <Button variant="contained" color='secondary' onClick={traerConfiguracion} >LEER CONFIGURACION</Button>
+                        <Button variant="contained" color='delete' onClick={borrarPuntos} >BORRAR PUNTOS</Button>
+                        <Button variant="contained" color='exito' onClick={guardarAreas} >GUARDAR AREA</Button>
                         <h5>Zonas creadas: </h5>
                         <Demo>
                             <List>
@@ -421,7 +420,7 @@ export default function HomeView() {
                                         <ListItem
                                             key={index}
                                             secondaryAction={
-                                                <IconButton onClick={() => { eliminarElemento(item) }} edge="end" aria-label="delete">
+                                                <IconButton onClick={() => { eliminarElemento(item) }} color='delete' edge="end" aria-label="delete">
                                                     <DeleteIcon />
                                                 </IconButton>
                                             }
