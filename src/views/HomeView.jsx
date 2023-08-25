@@ -33,8 +33,6 @@ let colores = [
 export default function HomeView() {
     const [colorSelected, setColorSelected] = useState(colores[0]);
     const [coloresPicker, setColoresPicker] = useState(colores);
-    // areas 2
-
     const pointsAreas = useRef([])
     const [areasDeclaradas, setAreasDeclaradas] = useState([])
     const areasTotales = useRef([]);
@@ -47,17 +45,14 @@ export default function HomeView() {
     const flag = useRef(false);
     const refPoint1 = useRef([160,170])
     const refPoint2 = useRef([510,170])
-
-    
-    
-      const handleClose = (event, reason) => {
+    const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
           return;
         }
     
         setOpen(false);
       };
-      const handleClose2 = (event, reason) => {
+    const handleClose2 = (event, reason) => {
         if (reason === 'clickaway') {
           return;
         }
@@ -67,25 +62,6 @@ export default function HomeView() {
     
     const handleChange = async(event) => {
         if(event.target.checked){
-            // console.log("se activa la ia")
-            // let aux_data = JSON.parse(JSON.stringify(areasTotales.current))
-            // let data_send = []
-            // for (let i = 0; i < aux_data.length; i++) {
-            //     let puntos = aux_data[i].points
-            //     puntos.forEach((item) => {
-            //         item[0] = parseInt(((640 * item[0]) / 960))
-            //         item[1] = parseInt(((360 * item[1]) / 540))
-            //     })
-            //     puntos.pop()
-            //     let new_data = {
-            //         points: puntos,
-            //         name: `zone-${i}`,
-            //         color: aux_data[i].stroke,
-            //         line_position: [refPoint1.current,refPoint2.current]
-            //     }
-            //     data_send.push(new_data)
-            // }
-            // await PostParams(data_send)
             await ConnectIA()
             setOpen(true)
             setChecked(true);
@@ -106,18 +82,11 @@ export default function HomeView() {
         let aux_area = pointsAreas.current
         let areas = areasTotales.current
 
-
-        // Context for the canvas for 2 dimensional operations
         const ctx = canvas.getContext('2d');
         ctx.canvas.width = 960;
         ctx.canvas.height = 540;
         ctx.lineWidth = 3;
 
-
-        // ctx.beginPath();
-        // ctx.arc(100, 75, 50, 0, 2 * Math.PI);
-        // ctx.stroke();
-        // ctx.closePath();
         if (aux_area.length > 1) {
             ctx.beginPath();
             ctx.fillStyle = 'rgba(93, 109, 126, 0.5)';
@@ -130,6 +99,7 @@ export default function HomeView() {
             ctx.closePath();
         }
 
+        // eslint-disable-next-line array-callback-return
         areas.map((item) => {
             ctx.beginPath();
             ctx.fillStyle = item.fill;
@@ -143,10 +113,8 @@ export default function HomeView() {
         })
 
      
-         
-        areas.map((item) => {
-
-            ctx.fillStyle = "yellow";
+        ctx.fillStyle = "yellow";
+        areas.map((item) => (
             item.points.forEach((item) => {
                 ctx.beginPath();
                 ctx.arc(item[0], item[1], 6, 0, 2 * Math.PI);
@@ -154,8 +122,7 @@ export default function HomeView() {
                 ctx.stroke();
                 ctx.closePath()
             })
-                ;
-        })
+        ))
         ctx.beginPath();
         ctx.strokeStyle = "black";
         ctx.moveTo(refPoint1.current[0], refPoint1.current[1]);
@@ -389,7 +356,7 @@ export default function HomeView() {
         borrarPuntos();
 
     
-            const interval = setInterval(async () => {
+        const interval = setInterval(async () => {
                 if(flag.current){
                 var data_ia = await getValues()
                 setZonesInference(data_ia.data)
@@ -397,8 +364,7 @@ export default function HomeView() {
             }, 500);
             return () => clearInterval(interval);
   
-
-        //eslint disable next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 
