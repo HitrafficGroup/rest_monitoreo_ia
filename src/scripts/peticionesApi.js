@@ -79,6 +79,26 @@ async function UpdateCounter(jsonData) {
 		});
  
 }
+
+async function KillTrhead(jsonData) {
+   
+	await axios.post(`${BASE_HT200}/kill`,jsonData)
+		.then(response => {
+
+        
+            console.log(response.data)
+       
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+			  })
+		});
+ 
+}
 async function ConnectIA(jsonData) {
    
 	await axios.post(`${BASE_HT200}/activateIA`,jsonData)
@@ -119,8 +139,28 @@ async function getConfig() {
 	return res
 }
 
+async function UpdateUmbral(jsonData) {
+   
+	await axios.post(`${BASE_HT200}/umbral`,jsonData)
+		.then(response => {
+
+        
+            console.log(response.data)
+       
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+			  })
+		});
+ 
+}
 
 
 
 
-export {PostParams,DisconnectIA,ConnectIA,getPredictions,getValues,UpdateCounter,getConfig}
+
+export {PostParams,DisconnectIA,ConnectIA,getPredictions,getValues,UpdateCounter,getConfig,KillTrhead,UpdateUmbral}

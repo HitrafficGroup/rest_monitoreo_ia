@@ -43,7 +43,7 @@ export const CardCounter = (props) => {
 };
 
 CardCounter.propTypes = {
-  value: PropTypes.string,
+  value: PropTypes.number,
   sx: PropTypes.object,
   color_icono:PropTypes.string
 };

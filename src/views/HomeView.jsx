@@ -1,6 +1,6 @@
 import Grid from '@mui/material/Grid';
 import { useEffect, useRef, useState } from 'react';
-import { PostParams, DisconnectIA, ConnectIA, getValues,UpdateCounter,getConfig } from '../scripts/peticionesApi';
+import { PostParams, DisconnectIA, ConnectIA, getValues, UpdateCounter, getConfig ,KillTrhead,UpdateUmbral} from '../scripts/peticionesApi';
 import { styled } from '@mui/material/styles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -22,51 +22,53 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import { CardCounter } from '../components/card-counter';
+import TextField from '@mui/material/TextField';
 let colores = [
     { stroke: 'rgba(192, 57, 43, 1)', fill: 'rgba(192, 57, 43 , 0.5)', active: true, name: 'rojo' },
     { stroke: 'rgba(81, 46, 95, 1)', fill: 'rgba(142, 68, 173,  0.5)', active: false, name: 'morado' },
     { stroke: 'rgba(27, 79, 114 ,1)', fill: 'rgba(41, 128, 185,  0.5)', active: false, name: 'azul' },
     { stroke: 'rgba(14, 98, 81 ,  1)', fill: 'rgba(26, 188, 156 ,  0.5)', active: false, name: 'verde' },
     { stroke: 'rgba(186, 74, 0, 1)', fill: 'rgba(235, 152, 78,  0.5)', active: false, name: 'anaranjado' },
-    { stroke: 'rgba(241, 196, 15,  1)', fill: 'rgba(183, 149, 11 , 0.5)', active: false, name: 'amarillo' },
+    { stroke: 'rgba(241, 196, 15,  1)', fill: 'rgba(183, 149, 11 , 0.5)', active: false, name: 'amarillo' }
 ]
 export default function HomeView() {
     const [colorSelected, setColorSelected] = useState(colores[0]);
     const [coloresPicker, setColoresPicker] = useState(colores);
+    const [umbral,setUmbral] = useState(0);
     const pointsAreas = useRef([])
     const [areasDeclaradas, setAreasDeclaradas] = useState([])
     const areasTotales = useRef([]);
     const markerPos = useRef([])
-    const [zonesInference, setZonesInference] = useState([{conteo:0}])
+    const [zonesInference, setZonesInference] = useState([{ conteo: 0 }])
     const [checked, setChecked] = useState(false);
-    const [open,  setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [open3, setOpen3] = useState(false);
     const flag = useRef(false);
-    const refPoint1 = useRef([160,170])
-    const refPoint2 = useRef([510,170])
+    const refPoint1 = useRef([160, 170])
+    const refPoint2 = useRef([510, 170])
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
-          return;
+            return;
         }
-    
+
         setOpen(false);
-      };
+    };
     const handleClose2 = (event, reason) => {
         if (reason === 'clickaway') {
-          return;
+            return;
         }
-    
+
         setOpen2(false);
-      };
-    
-    const handleChange = async(event) => {
-        if(event.target.checked){
+    };
+
+    const handleChange = async (event) => {
+        if (event.target.checked) {
             await ConnectIA()
             setOpen(true)
             setChecked(true);
             flag.current = true;
-        }else{
+        } else {
             console.log("se desactiva la ia")
             await DisconnectIA();
             setOpen2(true);
@@ -83,6 +85,8 @@ export default function HomeView() {
         let areas = areasTotales.current
 
         const ctx = canvas.getContext('2d');
+
+        
         ctx.canvas.width = 960;
         ctx.canvas.height = 540;
         ctx.lineWidth = 3;
@@ -112,7 +116,7 @@ export default function HomeView() {
             ctx.closePath();
         })
 
-     
+
         ctx.fillStyle = "yellow";
         areas.map((item) => (
             item.points.forEach((item) => {
@@ -167,7 +171,7 @@ export default function HomeView() {
             let new_data = {
                 points: puntos,
                 name: v4(),
-                fill:aux_data[i].fill,
+                fill: aux_data[i].fill,
                 stroke: aux_data[i].stroke
             }
             data_send.push(new_data)
@@ -177,8 +181,8 @@ export default function HomeView() {
         await PostParams(data_send)
 
     }
-   
-  
+
+
     const getVideoPrediction = async () => {
         var newImage = new Image();
         newImage.src = "http://127.0.0.1:50100/predict?" + new Date().getTime();
@@ -194,19 +198,25 @@ export default function HomeView() {
         setOpen3(false)
     }
 
-    const traerConfiguracion = async()=>{
+    const traerConfiguracion = async () => {
         let data = await getConfig()
-        data.forEach((item)=>{
-            item.points.forEach((item)=>{
-                item[0] = parseInt(((960 * item[0]) / 640))
-                item[1] = parseInt(((540 * item[1]) / 360))
-            })
-            item.points.push(item.points[0])
-        })
-        setAreasDeclaradas(data)
-        areasTotales.current = data
-        drawnPoints()
-        console.log(data)
+        if(data !== undefined){
+            if(data.length > 0){
+                data.forEach((item) => {
+                    item.points.forEach((item) => {
+                        item[0] = parseInt(((960 * item[0]) / 640))
+                        item[1] = parseInt(((540 * item[1]) / 360))
+                    })
+                    item.points.push(item.points[0])
+                })
+                setAreasDeclaradas(data)
+                areasTotales.current = data
+                drawnPoints()
+                console.log(data)
+            }
+        }
+       
+       
     }
 
 
@@ -272,24 +282,27 @@ export default function HomeView() {
             let new_data = {
                 name: aux_data[i].name,
                 points: puntos,
-                fill:aux_data[i].fill,
+                fill: aux_data[i].fill,
                 stroke: aux_data[i].stroke
             }
             data_send.push(new_data)
 
         }
-       
+
         await PostParams(data_send)
         setOpen3(false)
     }
-    const actualizarLinePos = async()=>{
-        let aux_point1 =  JSON.parse(JSON.stringify(refPoint1.current))
+    const actualizarLinePos = async () => {
+        let aux_point1 = JSON.parse(JSON.stringify(refPoint1.current))
         aux_point1[0] = parseInt(((640 * aux_point1[0]) / 960))
         aux_point1[1] = parseInt(((360 * aux_point1[1]) / 540))
-        let aux_point2 =  JSON.parse(JSON.stringify(refPoint2.current))
+        let aux_point2 = JSON.parse(JSON.stringify(refPoint2.current))
         aux_point2[0] = parseInt(((640 * aux_point2[0]) / 960))
         aux_point2[1] = parseInt(((360 * aux_point2[1]) / 540))
-        await UpdateCounter({line_position:[aux_point1,aux_point2]})
+        await UpdateCounter({ line_position: [aux_point1, aux_point2],umbral: parseInt(umbral) })
+    }
+    const matarProceso = async () => {
+        await KillTrhead()
     }
     function dragElement(elmnt) {
         var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -328,14 +341,11 @@ export default function HomeView() {
             elmnt.style.top = posx
             elmnt.style.left = posy
             if (elmnt.id === "mydiv") {
-                refPoint1.current =[x+15,y+15]
-            }else{
-                refPoint2.current = [x+15,y+15]
+                refPoint1.current = [x + 15, y + 15]
+            } else {
+                refPoint2.current = [x + 15, y + 15]
             }
             drawnPoints();
-
-
-
         }
 
         function closeDragElement() {
@@ -346,7 +356,11 @@ export default function HomeView() {
     }
 
 
-
+    const actualizarUmbral = async(_data)=>{
+        setUmbral(_data)
+        await UpdateUmbral({umbral: parseInt(_data)})
+        
+    }
 
 
     useEffect(() => {
@@ -355,17 +369,19 @@ export default function HomeView() {
         traerConfiguracion();
         borrarPuntos();
 
-    
+
         const interval = setInterval(async () => {
-                if(flag.current){
+            if (flag.current) {
                 var data_ia = await getValues()
+                console.log(data_ia)
                 setZonesInference(data_ia.data)
-                }
-            }, 500);
-            return () => clearInterval(interval);
-  
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+            }
+        }, 500);
+        return () => clearInterval(interval);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
 
 
 
@@ -375,23 +391,24 @@ export default function HomeView() {
                 <Grid item md={2}>
                     <Stack spacing={1} direction="column">
                         <FormGroup>
-                            <FormControlLabel control={<Switch checked={checked} color='success' onChange={handleChange}  inputProps={{ 'aria-label': 'controlled' }}  />} label="ACTIVAR IA" />
+                            <FormControlLabel control={<Switch checked={checked} color='success' onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />} label="ACTIVAR IA" />
                         </FormGroup>
                         <Button variant="contained" onClick={getVideoPrediction}>TRAER VIDEO</Button>
                     </Stack>
                 </Grid>
                 <Grid item md={2} >
-                    <CardCounter value={zonesInference[0].conteo} color_icono={'rgba(26, 188, 156 ,  0.5)'}/>
+                    {/* <CardCounter value={zonesInference[0].conteo} color_icono={'rgba(26, 188, 156 ,  0.5)'} /> */}
+                    <CardCounter value={0} color_icono={'rgba(26, 188, 156 ,  0.5)'} />
                 </Grid>
                 <Grid item md={8}>
                     <Stack direction="row" spacing={2}>
                         {
-                        zonesInference.map((item, index) => {
-                            return (
-                                <CardZone value={item.detecciones} zona={index} color_icono={item.color} />
-                            )
-                        }
-                        )}
+                            zonesInference.map((item, index) => {
+                                return (
+                                    <CardZone key={index} value={item.detecciones} zona={index} color_icono={item.color} />
+                                )
+                            }
+                            )}
                     </Stack>
                 </Grid>
 
@@ -408,7 +425,21 @@ export default function HomeView() {
 
                             }
                         </div>
+                        <TextField
+                            id="outlined-number"
+                            label="Umbral"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            InputProps={{ inputProps: { min: "1", max: "10", step: "1" } }}
+                            value={umbral}
+                            onChange={(event) => {
+                                actualizarUmbral(event.target.value);
+                              }}
+                            />
                         <Button variant="contained" color='primary' onClick={actualizarLinePos} >ACTUALIZAR</Button>
+                        <Button variant="contained" color='primary' onClick={matarProceso} >STOP</Button>
                         <Button variant="contained" color='delete' onClick={borrarPuntos} >BORRAR PUNTOS</Button>
                         <Button variant="contained" color='exito' onClick={guardarAreas} >GUARDAR AREA</Button>
                         <h5>Zonas creadas: </h5>
@@ -430,7 +461,7 @@ export default function HomeView() {
                                                     <ColorPicker key={index} fill={item.stroke} selected={false} />
                                                 </FormGroup>
                                             </ListItemAvatar>
-                                        <ListItemText primary={`zone-${index}`} />
+                                            <ListItemText primary={`zone-${index}`} />
                                         </ListItem>
                                     );
 
@@ -446,8 +477,8 @@ export default function HomeView() {
                         <canvas id="canvas" onClick={(event) => { printMousePosition(event) }}  >
 
                         </canvas>
-                        <div className="marker-1"  id="mydiv"  >1</div>
-                        <div className="marker-2"   id="mydiv2" >2</div>
+                        <div className="marker-1" id="mydiv"  >1</div>
+                        <div className="marker-2" id="mydiv2" >2</div>
                     </div>
 
                 </Grid>
