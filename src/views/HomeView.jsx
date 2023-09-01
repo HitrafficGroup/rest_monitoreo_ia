@@ -1,6 +1,6 @@
 import Grid from '@mui/material/Grid';
 import { useEffect, useRef, useState } from 'react';
-import { PostParams, DisconnectIA, ConnectIA, getValues, UpdateCounter, getConfig ,KillTrhead,UpdateUmbral} from '../scripts/peticionesApi';
+import { PostParams, DisconnectIA, ConnectIA, getValues, UpdateCounter, getConfig ,UpdateUmbral} from '../scripts/peticionesApi';
 import { styled } from '@mui/material/styles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -74,6 +74,9 @@ export default function HomeView() {
             setOpen2(true);
             setChecked(false);
             flag.current = false;
+            await sleep(2000);
+            var data_ia = await getValues()
+            setZonesInference(data_ia.data)
         }
     };
 
@@ -221,7 +224,11 @@ export default function HomeView() {
 
 
 
+    const DEF_DELAY = 1000;
 
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms || DEF_DELAY));
+    }
 
 
     const borrarPuntos = () => {
@@ -301,9 +308,9 @@ export default function HomeView() {
         aux_point2[1] = parseInt(((360 * aux_point2[1]) / 540))
         await UpdateCounter({ line_position: [aux_point1, aux_point2],umbral: parseInt(umbral) })
     }
-    const matarProceso = async () => {
-        await KillTrhead()
-    }
+    // const matarProceso = async () => {
+    //     await KillTrhead()
+    // }
     function dragElement(elmnt) {
         var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
         if (document.getElementById(elmnt.id + "header")) {
@@ -439,7 +446,7 @@ export default function HomeView() {
                               }}
                             />
                         <Button variant="contained" color='primary' onClick={actualizarLinePos} >ACTUALIZAR</Button>
-                        <Button variant="contained" color='primary' onClick={matarProceso} >STOP</Button>
+                       
                         <Button variant="contained" color='delete' onClick={borrarPuntos} >BORRAR PUNTOS</Button>
                         <Button variant="contained" color='exito' onClick={guardarAreas} >GUARDAR AREA</Button>
                         <h5>Zonas creadas: </h5>
